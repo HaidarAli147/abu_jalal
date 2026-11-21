@@ -7,29 +7,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="tv">
-  <div class="antenna" aria-hidden="true"></div>
-  <div class="cabinet">
-    <div class="bezel">
-      <div class="screen">
-        <header class="bar">
-          <span class="ch" id="ch">CH 01</span>
-          <span class="live">● على الهواء</span>
-        </header>
-        <h1>تنظيف يوم الجمعة</h1>
-        <p id="label"></p>
-        <div class="now" id="now"></div>
-        <h2>الجدول القادم</h2>
-        <ol id="list"></ol>
-      </div>
-    </div>
-    <aside class="panel" aria-hidden="true">
-      <div class="knob"></div>
-      <div class="knob small"></div>
-      <div class="grill"></div>
-    </aside>
+<main class="set">
+  <header class="title">تنظيف يوم الجمعة</header>
+  <div class="body">
+    <section class="panel">
+      <p id="label"></p>
+      <div class="now" id="now"></div>
+    </section>
+    <section class="panel">
+      <h2>الجدول القادم</h2>
+      <ol id="list"></ol>
+    </section>
   </div>
-  <div class="legs" aria-hidden="true"></div>
+  <footer class="status"><span id="ch">CH 01</span><span>غرفة الأولاد · كل جمعة</span></footer>
 </main>
 <script src="script.js"></script>
 </body>
