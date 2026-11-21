@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Friday Room Cleaning</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:32rem;margin:2rem auto;padding:0 1rem;line-height:1.5}
+  .now{font-size:1.6rem;font-weight:700;border:2px solid currentColor;border-radius:.5rem;padding:1rem}
+  li.me{font-weight:700}
+</style>
+</head>
+<body>
+<h1>Friday Room Cleaning</h1>
+<p id="label"></p>
+<div class="now" id="now"></div>
+<h2>Next weeks</h2>
+<ol id="list"></ol>
+<script>
+// Edit GROUPS to change people. Order = rotation order.
+const GROUPS = [
+  ["Ahmed", "Sadiq"],
+  ["Mohammed Hussain", "Sayed Ali"],
+  ["Mohammed Hassan", "Sayed Mohd Hadi"],
+  ["Haidar Ali", "Mohammed Yaqoob"],
+];
+// A Friday when GROUPS[0] cleans. Edit to restart the rotation.
+const START = "2026-11-27";
+
+const DAY = 864e5;
+const fmt = d => d.toLocaleDateString(undefined, {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+
+// Pure: which group cleans on the Friday on/after `today`.
+function rota(today, start = START, n = GROUPS.length) {
+  const s = new Date(start + "T00:00:00");
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const toFri = (5 - t.getDay() + 7) % 7;
+  const fri = new Date(t.getTime() + toFri * DAY);
+  const weeks = Math.round((fri - s) / (7 * DAY));
+  return { fri, idx: ((weeks % n) + n) % n };
+}
+
+if (new URLSearchParams(location.search).has("test")) {
+  console.assert(rota(new Date(2026,10,27)).idx === 0, "start Friday = group 0");
+  console.assert(rota(new Date(2026,11,4)).idx === 1, "next Friday = group 1");
+  console.assert(rota(new Date(2026,11,25)).idx === 0, "4 weeks later wraps");
+  console.assert(rota(new Date(2026,10,21)).idx === 0, "before start works");
+}
+
+const { fri, idx } = rota(new Date());
+const isToday = fri.toDateString() === new Date().toDateString();
+document.getElementById("label").textContent = (isToday ? "Today, " : "Next Friday, ") + fmt(fri) + ":";
+document.getElementById("now").textContent = GROUPS[idx].join(" + ");
+document.getElementById("list").innerHTML = Array.from({length: 8}, (_, i) =>
+  `<li${i ? "" : ' class="me"'}>${fmt(new Date(fri.getTime() + i * 7 * DAY))}: ${GROUPS[(idx + i) % GROUPS.length].join(" + ")}</li>`
+).join("");
+</script>
+</body>
+</html>
