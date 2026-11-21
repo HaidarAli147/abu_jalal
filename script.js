@@ -33,13 +33,13 @@ function who(fri, c) {
 function render() {
   const fri = nextFriday(new Date());
   const now = who(fri, cfg);
-  $("ch").textContent = "CH " + pad(now.idx);
+  $("ch").textContent = now.swapped ? "★" : "CH " + pad(now.idx);
   $("label").textContent = (iso(fri) === iso(new Date()) ? "اليوم " : "الجمعة القادمة: ") + fmt(fri);
   $("now").textContent = now.text;
   $("list").innerHTML = Array.from({ length: 8 }, (_, i) => {
     const d = addDays(fri, 7 * i);
     const w = who(d, cfg);
-    return `<li${i ? "" : ' class="me"'}><b>CH ${pad(w.idx)}</b><span>${esc(w.text)}${w.swapped ? " <em>(تبديل)</em>" : ""}</span><small>${fmt(d)}</small></li>`;
+    return `<li${i ? "" : ' class="me"'}><b>${w.swapped ? "★" : "CH " + pad(w.idx)}</b><span>${esc(w.text)}${w.swapped ? " <em>(تبديل)</em>" : ""}</span><small>${fmt(d)}</small></li>`;
   }).join("");
 }
 
