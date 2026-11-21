@@ -17,6 +17,7 @@
     });
   const say = (m, bad) => { $("amsg").textContent = m; $("amsg").className = bad ? "bad" : ""; };
   const isFri = (s) => /^\d{4}-\d\d-\d\d$/.test(s) && new Date(s + "T00:00:00").getDay() === 5;
+  const split = (s) => s.split("+").map((x) => x.trim()).filter(Boolean);
 
   async function unlock(pw) {
     const f = await (await fetch("admin.enc.json", { cache: "no-store" })).json();
@@ -42,31 +43,41 @@
 
   function editor() {
     const d = structuredClone(cfg);
-    // Read the form back into the working copy before any redraw.
+    // Read the form back into the working copy before any redraw (empty rows are kept until save).
     const parse = () => {
-      d.groups = $("ag").value.split("\n")
-        .map((l) => l.split("+").map((x) => x.trim()).filter(Boolean)).filter((g) => g.length);
+      d.groups = [...box.querySelectorAll("[data-g]")].map((i) => split(i.value));
       d.start = $("as").value;
     };
     const draw = () => {
       box.innerHTML = `<h2>إدارة الجدول</h2>
-        <label>المجموعات (سطر لكل مجموعة، الأسماء بينها +)
-          <textarea id="ag" rows="5">${esc(d.groups.map((g) => g.join(" + ")).join("\n"))}</textarea></label>
+        <h3>المجموعات (بالترتيب، والدور يمشي عليها)</h3>
+        ${d.groups.map((g, i) => `<p class="grow"><b>${i + 1}</b>
+          <input data-g="${i}" value="${esc(g.join(" + "))}" placeholder="الأسماء بينها +">
+          <button data-up="${i}">▲</button> <button data-dn="${i}">▼</button> <button data-rm="${i}">حذف</button></p>`).join("")}
+        <p><button id="gadd">+ مجموعة جديدة</button></p>
         <label>أول جمعة للمجموعة 1<input id="as" type="date" value="${d.start}"></label>
         <h3>تبديل مؤقت (جمعة واحدة فقط)</h3>
         <ul>${Object.entries(d.overrides).sort().map(([k, v]) =>
           `<li>${k}: ${esc(v)} <button data-del="${k}">حذف</button></li>`).join("")}</ul>
-        <p><input id="od" type="date"> <input id="on" list="gl" placeholder="الأسماء">
-        <datalist id="gl">${d.groups.map((g) => `<option value="${esc(names(g))}">`).join("")}</datalist>
-        <button id="oadd">إضافة</button></p>
+        <p><input id="od" type="date">
+        <select id="osel">${d.groups.map((g, i) => g.length ? `<option value="${i}">${esc(names(g))}</option>` : "").join("")}
+          <option value="x">مجموعة مؤقتة…</option></select>
+        <input id="on" placeholder="أحمد + علي" style="display:none"> <button id="oadd">إضافة</button></p>
         <p><button id="asave">حفظ</button> <button id="aout">خروج</button> <button id="aclose">إغلاق</button></p>
         <p id="amsg"></p>`;
-      box.querySelectorAll("[data-del]").forEach((b) => (b.onclick = () => {
-        parse(); delete d.overrides[b.dataset.del]; draw();
+      const each = (attr, fn) => box.querySelectorAll(`[${attr}]`).forEach((b) => (b.onclick = () => {
+        parse(); fn(b.dataset[attr.slice(5)]); draw();
       }));
+      each("data-del", (k) => delete d.overrides[k]);
+      each("data-rm", (i) => d.groups.splice(+i, 1));
+      each("data-up", (i) => { i = +i; if (i > 0) [d.groups[i - 1], d.groups[i]] = [d.groups[i], d.groups[i - 1]]; });
+      each("data-dn", (i) => { i = +i; if (i < d.groups.length - 1) [d.groups[i + 1], d.groups[i]] = [d.groups[i], d.groups[i + 1]]; });
+      $("gadd").onclick = () => { parse(); d.groups.push([]); draw(); };
+      $("osel").onchange = () => { $("on").style.display = $("osel").value === "x" ? "inline-block" : "none"; };
       $("oadd").onclick = () => {
-        const k = $("od").value, v = $("on").value.trim();
-        if (!isFri(k) || !v) return say("اختر يوم جمعة واكتب الأسماء", true);
+        const k = $("od").value, s = $("osel").value;
+        const v = s === "x" ? names(split($("on").value)) : names(d.groups[+s]);
+        if (!isFri(k) || !v) return say("اختر يوم جمعة ومجموعة", true);
         parse(); d.overrides[k] = v; draw();
       };
       $("aclose").onclick = () => (box.hidden = true);
@@ -75,6 +86,7 @@
     };
     const save = async () => {
       parse();
+      d.groups = d.groups.filter((g) => g.length);
       if (!d.groups.length || !isFri(d.start))
         return say("تأكد من المجموعات ومن أن تاريخ البداية يوم جمعة", true);
       try {
@@ -89,6 +101,7 @@
         if (!r.ok) return say("فشل الحفظ (" + r.status + ")", true);
         cfg = structuredClone(d);
         render();
+        draw();
         say("تم الحفظ. يظهر للجميع خلال دقيقة تقريباً.");
       } catch { say("فشل الحفظ: لا يوجد اتصال", true); }
     };

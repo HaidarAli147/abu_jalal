@@ -62,6 +62,8 @@ li.me em{color:var(--yellow)}
   border:.15rem solid;border-color:var(--shade) var(--white) var(--white) var(--shade);
 }
 .adm p input{display:inline-block;width:auto}
+.adm .grow input{width:min(20rem,55%)}
+.adm select{font:inherit;padding:.3rem;max-width:100%}
 .adm ul{margin:0 0 .6rem;padding:0;list-style:none}
 .adm li{padding:.2rem 0;font-size:.95rem;font-weight:400}
 .bad{color:#a00000;font-weight:700}
