@@ -47,6 +47,25 @@ li.me small{color:var(--yellow)}
   font-size:.9rem;border-top:.15rem solid var(--shade);
 }
 
+li em{font-style:normal;color:#a00000}
+li.me em{color:var(--yellow)}
+.status{align-items:center}
+.btn,.adm button{
+  font:inherit;font-size:.85rem;color:#000;background:var(--silver);cursor:pointer;padding:.15rem .7rem;
+  border:.15rem solid;border-color:var(--white) var(--shade) var(--shade) var(--white);
+}
+.adm{margin:0 1rem 1rem;font-size:.95rem}
+.adm h2,.adm h3{margin:.2rem 0 .5rem}
+.adm label{display:block;margin-bottom:.6rem;font-weight:700}
+.adm input,.adm textarea{
+  display:block;width:100%;font:inherit;padding:.3rem;background:var(--white);
+  border:.15rem solid;border-color:var(--shade) var(--white) var(--white) var(--shade);
+}
+.adm p input{display:inline-block;width:auto}
+.adm ul{margin:0 0 .6rem;padding:0;list-style:none}
+.adm li{padding:.2rem 0;font-size:.95rem;font-weight:400}
+.bad{color:#a00000;font-weight:700}
+
 @media (max-width:700px){
   html{font-size:15px}
   .body{grid-template-columns:1fr}
