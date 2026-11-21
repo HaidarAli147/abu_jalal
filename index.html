@@ -1,17 +1,36 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Friday Room Cleaning</title>
+<title>تنظيف يوم الجمعة</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>تنظيف يوم الجمعة</h1>
-<p id="label"></p>
-<div class="now" id="now"></div>
-<h2>الأسبوع المقبل</h2>
-<ol id="list"></ol>
- <script src="scrpit.js""></script>
+<main class="tv">
+  <div class="antenna" aria-hidden="true"></div>
+  <div class="cabinet">
+    <div class="bezel">
+      <div class="screen">
+        <header class="bar">
+          <span class="ch" id="ch">CH 01</span>
+          <span class="live">● على الهواء</span>
+        </header>
+        <h1>تنظيف يوم الجمعة</h1>
+        <p id="label"></p>
+        <div class="now" id="now"></div>
+        <h2>الجدول القادم</h2>
+        <ol id="list"></ol>
+      </div>
+    </div>
+    <aside class="panel" aria-hidden="true">
+      <div class="knob"></div>
+      <div class="knob small"></div>
+      <div class="grill"></div>
+    </aside>
+  </div>
+  <div class="legs" aria-hidden="true"></div>
+</main>
+<script src="script.js"></script>
 </body>
 </html>
